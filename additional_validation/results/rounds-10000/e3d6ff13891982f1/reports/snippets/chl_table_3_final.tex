@@ -1,0 +1,19 @@
+\begin{table}[!htbp]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.18}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Experiment & Training loss & Val.\ loss & Test MAPE (\%) & Test RMSE \\
+\midrule
+$N=1$ & $0.00211$ & $0.00209$ & $4.27\pm0.837$ & $341\pm25.2$ \\
+$N=2$ & $0.00104$ & $0.00119$ & $2.76\pm1.08$ & $133\pm51.1$ \\
+$N=3$ & $0.00100$ & $0.00128$ & $2.58\pm1.28$ & $108\pm52.2$ \\
+$N=5$ & $6.49\times10^{-4}$ & $6.91\times10^{-4}$ & $1.64\pm0.804$ & $45.3\pm19.5$ \\
+$N=7$ & $5.10\times10^{-4}$ & $8.08\times10^{-4}$ & $1.30\pm0.519$ & $36.9\pm16.3$ \\
+\bottomrule
+\end{tabular}
+\caption{\textsf{CHL results for negative integer powers, using coefficient positions 0 through 29, using the final checkpoint. Test MAPE is the mean absolute percentage error of the signed modular weight; test RMSE is in weight units. Predictions are transformed back from the fitted target before either test metric is evaluated. Losses are means in the fitted target space, as defined in the experimental protocol. Test entries show means across training seeds on a fixed split, with sample standard deviations when at least two seeds are available; the full study uses three seeds per row. Training budget: $10000$ rounds. Each dataset contains $999$ rows. All rows use Net3. Optimizer: RMSProp. This table replaces manuscript Table~3; its percentages are not errors of logarithmic targets.}}
+\label{tab:chl-revised-3-final}
+\end{table}

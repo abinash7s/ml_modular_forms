@@ -1,0 +1,165 @@
+{
+  "eta_negative": {
+    "Family": "Eta",
+    "PowerRange": [
+      -1,
+      -400,
+      -1
+    ]
+  },
+  "chl_N3_positive_integer": {
+    "Family": "CHL",
+    "Level": 3,
+    "PowerRange": [
+      2,
+      1000,
+      1
+    ]
+  },
+  "eta_paper_positive_integer": {
+    "Family": "Eta",
+    "PowerRange": [
+      2,
+      2000,
+      1
+    ]
+  },
+  "e2eta_positive": {
+    "Family": "E2Eta",
+    "PowerHalfIntegerRange": [
+      1,
+      200
+    ]
+  },
+  "chl_N1_positive_integer": {
+    "Family": "CHL",
+    "Level": 1,
+    "PowerRange": [
+      2,
+      1000,
+      1
+    ]
+  },
+  "chl_N2_positive_integer": {
+    "Family": "CHL",
+    "Level": 2,
+    "PowerRange": [
+      2,
+      1000,
+      1
+    ]
+  },
+  "chl_N5_positive_integer": {
+    "Family": "CHL",
+    "Level": 5,
+    "PowerRange": [
+      2,
+      1000,
+      1
+    ]
+  },
+  "chl_N7_positive_integer": {
+    "Family": "CHL",
+    "Level": 7,
+    "PowerRange": [
+      2,
+      1000,
+      1
+    ]
+  },
+  "chl_N1_negative_integer": {
+    "Family": "CHL",
+    "Level": 1,
+    "PowerRange": [
+      -2,
+      -1000,
+      -1
+    ]
+  },
+  "chl_N2_negative_integer": {
+    "Family": "CHL",
+    "Level": 2,
+    "PowerRange": [
+      -2,
+      -1000,
+      -1
+    ]
+  },
+  "chl_N3_negative_integer": {
+    "Family": "CHL",
+    "Level": 3,
+    "PowerRange": [
+      -2,
+      -1000,
+      -1
+    ]
+  },
+  "chl_N5_negative_integer": {
+    "Family": "CHL",
+    "Level": 5,
+    "PowerRange": [
+      -2,
+      -1000,
+      -1
+    ]
+  },
+  "chl_N7_negative_integer": {
+    "Family": "CHL",
+    "Level": 7,
+    "PowerRange": [
+      -2,
+      -1000,
+      -1
+    ]
+  },
+  "chl_N1_positive_rational": {
+    "Family": "CHL",
+    "Level": 1,
+    "PowersFile": "chl_rational_positive.wl"
+  },
+  "chl_N2_positive_rational": {
+    "Family": "CHL",
+    "Level": 2,
+    "PowersFile": "chl_rational_positive.wl"
+  },
+  "chl_N3_positive_rational": {
+    "Family": "CHL",
+    "Level": 3,
+    "PowersFile": "chl_rational_positive.wl"
+  },
+  "chl_N5_positive_rational": {
+    "Family": "CHL",
+    "Level": 5,
+    "PowersFile": "chl_rational_positive.wl"
+  },
+  "chl_N7_positive_rational": {
+    "Family": "CHL",
+    "Level": 7,
+    "PowersFile": "chl_rational_positive.wl"
+  },
+  "chl_N1_negative_rational": {
+    "Family": "CHL",
+    "Level": 1,
+    "PowersFile": "chl_rational_negative.wl"
+  },
+  "chl_N2_negative_rational": {
+    "Family": "CHL",
+    "Level": 2,
+    "PowersFile": "chl_rational_negative.wl"
+  },
+  "chl_N3_negative_rational": {
+    "Family": "CHL",
+    "Level": 3,
+    "PowersFile": "chl_rational_negative.wl"
+  },
+  "chl_N5_negative_rational": {
+    "Family": "CHL",
+    "Level": 5,
+    "PowersFile": "chl_rational_negative.wl"
+  },
+  "chl_N7_negative_rational": {
+    "Family": "CHL",
+    "Level": 7,
+    "PowersFile": "chl_rational_negative.wl"
+  }
+}

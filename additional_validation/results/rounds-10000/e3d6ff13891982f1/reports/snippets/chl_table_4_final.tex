@@ -1,0 +1,19 @@
+\begin{table}[!htbp]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.18}
+\begin{tabular}{@{}llrrrr@{}}
+\toprule
+Experiment & Optimizer & Training loss & Val.\ loss & Test MAPE (\%) & Test RMSE \\
+\midrule
+$N=1$ & RMSProp & $0.00144$ & $0.00152$ & $3.11\pm2.09$ & $275\pm195$ \\
+$N=2$ & RMSProp & $8.42\times10^{-4}$ & $0.00147$ & $2.48\pm1.17$ & $125\pm76.8$ \\
+$N=3$ & RMSProp & $8.90\times10^{-4}$ & $0.00208$ & $3.09\pm0.379$ & $104\pm10.8$ \\
+$N=5$ & ADAM & $1.05\times10^{-4}$ & $0.00545$ & $2.51\pm0.370$ & $20.3\pm6.64$ \\
+$N=7$ & SGD & $8.91\times10^{-5}$ & $0.00645$ & $2.18\pm0.707$ & $3.61\pm0.520$ \\
+\bottomrule
+\end{tabular}
+\caption{\textsf{CHL results for the stored sample of positive rational powers, using coefficient positions 0 through 29, using the final checkpoint. Test MAPE is the mean absolute percentage error of the signed modular weight; test RMSE is in weight units. Predictions are transformed back from the fitted target before either test metric is evaluated. Losses are means in the fitted target space, as defined in the experimental protocol. Test entries show means across training seeds on a fixed split, with sample standard deviations when at least two seeds are available; the full study uses three seeds per row. Training budget: $10000$ rounds. Each dataset contains $2000$ rows. Repeated rational powers are kept in the same data partition. All rows use Net3. The recorded optimizer choices are ADAM, RMSProp, SGD, as shown per row. This table replaces manuscript Table~4; its percentages are not errors of logarithmic targets.}}
+\label{tab:chl-revised-4-final}
+\end{table}

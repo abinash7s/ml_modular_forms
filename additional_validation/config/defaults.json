@@ -1,0 +1,26 @@
+{
+  "Rounds": 10000,
+  "Seeds": [
+    101,
+    102,
+    103
+  ],
+  "SplitSeed": 20260926,
+  "BatchSize": 64,
+  "LearningRate": 0.001,
+  "Initializer": "Kaiming",
+  "TargetDevice": "CPU",
+  "WorkingPrecision": "Real64",
+  "CoefficientCount": 30,
+  "SplitFractions": [
+    0.75,
+    0.15,
+    0.1
+  ],
+  "InterpolationNRMSE": 0.001,
+  "ZeroCoefficientLogPolicy": "ZeroMapsToZero",
+  "DefaultSuites": [
+    "width_depth",
+    "chl"
+  ]
+}
