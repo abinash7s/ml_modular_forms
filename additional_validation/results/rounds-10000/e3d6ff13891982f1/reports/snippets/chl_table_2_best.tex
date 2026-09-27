@@ -1,0 +1,20 @@
+\begin{table}[!htbp]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.18}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Experiment & Training loss & Val.\ loss & Test MAPE (\%) & Test RMSE \\
+\midrule
+$\eta$ & $1.65\times10^{-4}$ & $0.00137$ & $0.753\pm0.194$ & $6.83\pm1.77$ \\
+$N=1$ & $7.34\times10^{-5}$ & $5.18\times10^{-5}$ & $0.622\pm0.107$ & $66.1\pm16.1$ \\
+$N=2$ & $3.24\times10^{-4}$ & $3.28\times10^{-4}$ & $0.837\pm0.155$ & $40.3\pm19.6$ \\
+$N=3$ & $2.68\times10^{-4}$ & $1.26\times10^{-4}$ & $0.998\pm0.473$ & $40.3\pm9.28$ \\
+$N=5$ & $7.18\times10^{-4}$ & $0.00295$ & $1.89\pm1.04$ & $53.4\pm19.7$ \\
+$N=7$ & $2.30\times10^{-4}$ & $9.08\times10^{-4}$ & $0.996\pm0.116$ & $22.7\pm9.79$ \\
+\bottomrule
+\end{tabular}
+\caption{\textsf{CHL and eta results for positive integer powers, using coefficient positions 0 through 29, using the checkpoint selected by validation loss. Test MAPE is the mean absolute percentage error of the signed modular weight; test RMSE is in weight units. Predictions are transformed back from the fitted target before either test metric is evaluated. Losses are means in the fitted target space, as defined in the experimental protocol. Test entries show means across training seeds on a fixed split, with sample standard deviations when at least two seeds are available; the full study uses three seeds per row. Training budget: $10000$ rounds. Dataset sizes are $999$, $1999$ rows; exact ranges are recorded with the data. Optimizer: RMSProp. This table replaces manuscript Table~2; its percentages are not errors of logarithmic targets.}}
+\label{tab:chl-revised-2-best}
+\end{table}

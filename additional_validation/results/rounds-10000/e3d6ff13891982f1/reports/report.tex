@@ -1,0 +1,56 @@
+\documentclass[10pt]{article}
+\usepackage[margin=0.65in]{geometry}
+\usepackage{amsmath,amssymb,booktabs}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.45em}
+\newcommand\capt[1]{\caption{\textsf{#1}}}
+\title{Additional validation and CHL weight prediction}
+\author{}
+\date{}
+\begin{document}
+\maketitle
+\input{snippets/depth_width_appendix.tex}
+\clearpage
+\section{CHL tables}
+All test metrics are evaluated after predictions have been returned to the signed physical weight $w$:
+\begin{align}
+ \mathrm{MAPE} &= \frac{100}{n}\sum_{i=1}^n
+              \frac{|\widehat w_i-w_i|}{|w_i|},\\
+ \mathrm{RMSE} &= \sqrt{\frac1n\sum_{i=1}^n(\widehat w_i-w_i)^2}.
+\end{align}
+The CHL datasets have nonzero weights. Thus their MAPE requires no omission of
+zero targets and is not a percentage error of a logarithm. When a logarithmic
+target is fitted, its transformation is inverted before these metrics are
+computed, including the known sign and family-dependent conversion from power
+to weight. Training and validation losses remain in the fitted target space;
+their numerical values should not be compared across different target transformations.
+Recorded input transformations: \texttt{LogAbsL2}. Recorded target transformations:
+\texttt{LogAbsPower}. Recorded training budgets: 10000 rounds.
+For \texttt{LogAbsL2}, coefficient magnitudes are logged and the resulting vector is normalized to unit Euclidean norm; exactly zero coefficients are mapped to zero while retaining their positions.
+For \texttt{LogAbsPower}, the fitted target is $\log|s|$, where $s$ is the power; a predicted value $z$ is decoded as $\widehat w=\operatorname{sgn}(s)K_0 e^z$, with the known weight $K_0$ of the parent form.
+The final checkpoint and the checkpoint minimizing validation loss are reported
+separately. Test errors play no part in checkpoint selection. Error bars are sample
+standard deviations over training seeds on fixed data partitions, not confidence
+intervals over alternative partitions or modular-form families.
+The tables below use validation-selected checkpoints. The alternate checkpoint tables are supplied as separate snippets. These new weight errors must not be substituted for earlier log-target errors without updating the metric definition and captions.
+\clearpage
+\subsection{Positive integer powers, all 30 coefficients}
+\input{snippets/chl_table_2_best.tex}
+\subsection{Negative integer powers, all 30 coefficients}
+\input{snippets/chl_table_3_best.tex}
+\clearpage
+\subsection{Positive rational powers, all 30 coefficients}
+\input{snippets/chl_table_4_best.tex}
+\subsection{Negative rational powers, all 30 coefficients}
+\input{snippets/chl_table_5_best.tex}
+\clearpage
+\subsection{Positive integer powers, fixed 15-coefficient slice}
+\input{snippets/chl_table_6_best.tex}
+\subsection{Negative integer powers, fixed 15-coefficient slice}
+\input{snippets/chl_table_7_best.tex}
+\clearpage
+\end{document}

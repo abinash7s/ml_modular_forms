@@ -1,0 +1,16 @@
+
+# Additional validation: large outputs distributed separately
+/additional_validation/results/cache/
+/additional_validation/results/data_cache/
+/additional_validation/results/**/predictions/
+/additional_validation/results/**/curves/
+/additional_validation/results/smoke/
+/additional_validation/results/LATEST.txt
+/additional_validation/notebook_workflow/generated/
+
+# Temporary files produced when compiling reports
+/additional_validation/results/**/*.aux
+/additional_validation/results/**/*.log
+/additional_validation/results/**/*.out
+
+.DS_Store

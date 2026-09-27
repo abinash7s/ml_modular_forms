@@ -1,0 +1,1137 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Wolfram 14.3' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       154,          7]
+NotebookDataLength[     46235,       1127]
+NotebookOptionsPosition[     37398,        944]
+NotebookOutlinePosition[     41514,       1049]
+CellTagsIndexPosition[     41085,       1031]
+WindowTitle->Data and mathematical definitions
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Data and mathematical definitions", "Title",ExpressionUUID->"af0f84c5-5af2-4436-9f1b-a43de77b03aa"],
+
+Cell["Machine learning modular forms | 1 of 4", "Subtitle",ExpressionUUID->"b27bd187-3fcf-4142-a89e-18355530f476"],
+
+Cell["\<\
+Exact Fourier coefficients for eta powers, CHL eta products and \
+Eisenstein-series examples. Evaluate the setup first, then read and evaluate \
+the sections you need. The small examples are inexpensive, and dataset \
+exports are opt-in. Coefficient positions and target definitions are retained \
+with the data.\
+\>", "Text",
+ CellChangeTimes->{{3.9994934295399227`*^9, 
+  3.999493431314623*^9}},ExpressionUUID->"23f48452-04bb-4ba3-9477-\
+a7798fca8fba"],
+
+Cell[CellGroupData[{
+
+Cell["1. Setup", "Section",ExpressionUUID->"1412e4ee-47a0-4c3d-bf8e-77b3e0acaa2e"],
+
+Cell["\<\
+Keep the notebooks, support and example_results directories together. Each \
+notebook can be opened in a fresh kernel. Definitions in this notebook are \
+local to its notebook context; the shared packages provide the same data and \
+training routines used by the additional-validation study.\
+\>", "Text",ExpressionUUID->"b1576916-9a89-4b09-ba4e-9bcdb85364ae"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"baseDir", " ", "=", " ", 
+   RowBox[{"ParentDirectory", "[", 
+    RowBox[{"NotebookDirectory", "[", "]"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"supportDir", " ", "=", " ", 
+   RowBox[{"FileNameJoin", "[", 
+    RowBox[{"{", 
+     RowBox[{"baseDir", ",", " ", "\"\<support\>\""}], "}"}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"outputRoot", " ", "=", " ", 
+   RowBox[{"FileNameJoin", "[", 
+    RowBox[{"{", 
+     RowBox[{"baseDir", ",", " ", "\"\<generated\>\""}], "}"}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"Get", "[", 
+   RowBox[{"FileNameJoin", "[", 
+    RowBox[{"{", 
+     RowBox[{
+     "supportDir", ",", " ", "\"\<src\>\"", ",", " ", "\"\<Data.wl\>\""}], 
+     "}"}], "]"}], "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"Get", "[", 
+   RowBox[{"FileNameJoin", "[", 
+    RowBox[{"{", 
+     RowBox[{
+     "supportDir", ",", " ", "\"\<src\>\"", ",", " ", "\"\<Training.wl\>\""}],
+      "}"}], "]"}], "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"$HistoryLength", " ", "=", " ", "5"}], ";"}]}], "Input",
+ InitializationCell->True,
+ CellTags->"input-5",ExpressionUUID->"0cd67df4-033d-45c9-9c9f-4456439de6da"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["2. Expansion variables and target weights", "Section",ExpressionUUID->"06278556-ba7e-4591-8110-b8bf866c5699"],
+
+Cell["\<\
+Throughout this notebook q = exp(2 pi i tau). A coefficient vector represents \
+the regular series after removing its leading q power. If F(q) = q^lambda (a0 \
++ a1 q + ...), the vector contains a0, a1, ... and lambda is stored \
+separately. Exact zeros remain in their original positions. In the Jacobi \
+notebook the theta nome is Q = exp(pi i tau), so q = Q^2.\
+\>", "Text",ExpressionUUID->"eda29639-cb10-4f22-a192-1b1f6910186c"],
+
+Cell[BoxData[
+ RowBox[{"Grid", "[", 
+  RowBox[{
+   RowBox[{"{", "\n", " ", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"\"\<Family\>\"", ",", " ", "\"\<Function\>\"", ",", 
+       " ", "\"\<Leading q power\>\"", ",", " ", "\"\<Weight target\>\""}], 
+      "}"}], ",", "\n", " ", 
+     RowBox[{"{", 
+      RowBox[{"\"\<Eta\>\"", ",", " ", 
+       RowBox[{"HoldForm", "[", 
+        RowBox[{
+         RowBox[{"DedekindEta", "[", "tau", "]"}], "^", "r"}], "]"}], ",", 
+       " ", 
+       RowBox[{"r", "/", "24"}], ",", " ", 
+       RowBox[{"r", "/", "2"}]}], "}"}], ",", "\n", " ", 
+     RowBox[{"{", 
+      RowBox[{"\"\<CHL\>\"", ",", " ", 
+       RowBox[{"HoldForm", "[", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"DedekindEta", "[", "tau", "]"}], " ", 
+           RowBox[{"DedekindEta", "[", 
+            RowBox[{"n", " ", "tau"}], "]"}]}], ")"}], "^", 
+         RowBox[{"(", 
+          RowBox[{"24", " ", 
+           RowBox[{"s", "/", 
+            RowBox[{"(", 
+             RowBox[{"n", " ", "+", " ", "1"}], ")"}]}]}], ")"}]}], "]"}], ",",
+        " ", "s", ",", " ", 
+       RowBox[{"24", " ", 
+        RowBox[{"s", "/", 
+         RowBox[{"(", 
+          RowBox[{"n", " ", "+", " ", "1"}], ")"}]}]}]}], "}"}], ",", "\n", 
+     " ", 
+     RowBox[{"{", 
+      RowBox[{"\"\<E2 eta\>\"", ",", " ", 
+       RowBox[{"HoldForm", "[", 
+        RowBox[{"2", " ", 
+         RowBox[{"e2", "[", "tau", "]"}], " ", 
+         RowBox[{
+          RowBox[{"DedekindEta", "[", "tau", "]"}], "^", 
+          RowBox[{"(", 
+           RowBox[{"2", " ", "w"}], ")"}]}]}], "]"}], ",", " ", 
+       RowBox[{"w", "/", "12"}], ",", " ", 
+       RowBox[{"w", " ", "+", " ", "2"}]}], "}"}], ",", "\n", " ", 
+     RowBox[{"{", 
+      RowBox[{"\"\<Positive integer E2 powers\>\"", ",", " ", 
+       RowBox[{"HoldForm", "[", 
+        RowBox[{
+         RowBox[{"e2", "[", "tau", "]"}], "^", "p"}], "]"}], ",", " ", "0", ",",
+        " ", 
+       RowBox[{"2", " ", "p"}]}], "}"}]}], "\n", " ", "}"}], ",", " ", 
+   RowBox[{"Alignment", " ", "->", " ", "Left"}], ",", " ", 
+   RowBox[{"Dividers", " ", "->", " ", 
+    RowBox[{"{", 
+     RowBox[{"None", ",", " ", 
+      RowBox[{"{", 
+       RowBox[{"False", ",", " ", "True"}], "}"}]}], "}"}]}], ",", " ", 
+   RowBox[{"Spacings", " ", "->", " ", 
+    RowBox[{"{", 
+     RowBox[{"2", ",", " ", "1"}], "}"}]}]}], "]"}]], "Input",
+ CellTags->"input-8",ExpressionUUID->"ddf59177-f50a-4adc-84e3-e44d70222a6c"],
+
+Cell["\<\
+For eta^(2 w), w is the weight and 2 w is the eta exponent. Thus integer eta \
+exponents include half-integral weights. Eta powers carry their inherited \
+multiplier; negative powers have poles at cusps. Rational powers require a \
+branch convention and are not automatically ordinary scalar modular forms. \
+The E2 examples are quasimodular; E2 times an eta power has the corresponding \
+multiplier and cusp behaviour.\
+\>", "Text",ExpressionUUID->"3c409327-f6b6-40ce-bab8-12f41d51e29b"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["3. Exact coefficients from a short recurrence", "Section",ExpressionUUID->"ce97df03-9110-44fe-bb67-8013be01fac8"],
+
+Cell["\<\
+The following definition is deliberately visible and editable. For a product \
+of eta(d tau)^r, remove q^(Sum[d r]/24). Its logarithmic derivative gives n \
+a_n = Sum[b_k a_(n-k), k=1..n], where b_k = -Sum[r d sigma_1(k/d), d divides \
+k]. The shared generator implements this same recurrence with input checks. \
+Use exact integers or rationals rather than decimal exponents. Editing \
+etaProductExample changes this demonstration. GenerateRows uses the shared \
+package definition; the custom-family section below shows how to train and \
+export a formula defined directly in this notebook.\
+\>", "Text",ExpressionUUID->"019f5163-0661-4883-b192-6f3899e4e679"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Clear", "[", "etaProductExample", "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"etaProductExample", "[", 
+    RowBox[{
+     RowBox[{"terms", "_", "List"}], ",", " ", 
+     RowBox[{"count", "_", 
+      RowBox[{"Integer", "?", "Positive"}]}]}], "]"}], " ", ":=", " ", 
+   RowBox[{"Module", "[", "\n", " ", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"a", " ", "=", " ", 
+        RowBox[{"ConstantArray", "[", 
+         RowBox[{"0", ",", " ", "count"}], "]"}]}], ",", " ", "b", ",", " ", 
+       "n", ",", " ", "k"}], "}"}], ",", "\n", " ", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"a", "[", 
+        RowBox[{"[", "1", "]"}], "]"}], " ", "=", " ", "1"}], ";", "\n", " ", 
+      
+      RowBox[{"b", " ", "=", " ", 
+       RowBox[{"Table", "[", 
+        RowBox[{
+         RowBox[{"-", 
+          RowBox[{"Total", "[", 
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"If", "[", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Mod", "[", 
+                  RowBox[{"k", ",", " ", 
+                   RowBox[{"#", "[", 
+                    RowBox[{"[", "1", "]"}], "]"}]}], "]"}], " ", "==", " ", 
+                 "0"}], ",", "\n", "       ", 
+                RowBox[{
+                 RowBox[{"#", "[", 
+                  RowBox[{"[", "2", "]"}], "]"}], " ", 
+                 RowBox[{"#", "[", 
+                  RowBox[{"[", "1", "]"}], "]"}], " ", 
+                 RowBox[{"DivisorSigma", "[", 
+                  RowBox[{"1", ",", " ", 
+                   RowBox[{"k", "/", 
+                    RowBox[{"#", "[", 
+                    RowBox[{"[", "1", "]"}], "]"}]}]}], "]"}]}], ",", " ", 
+                "0"}], "]"}], " ", "&"}], ")"}], " ", "/@", " ", "terms"}], 
+           "]"}]}], ",", "\n", "    ", 
+         RowBox[{"{", 
+          RowBox[{"k", ",", " ", "1", ",", " ", 
+           RowBox[{"count", " ", "-", " ", "1"}]}], "}"}]}], "]"}]}], ";", 
+      "\n", " ", 
+      RowBox[{"Do", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"a", "[", 
+          RowBox[{"[", 
+           RowBox[{"n", " ", "+", " ", "1"}], "]"}], "]"}], " ", "=", " ", 
+         RowBox[{"Together", "[", 
+          RowBox[{
+           RowBox[{"Sum", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"b", "[", 
+               RowBox[{"[", "k", "]"}], "]"}], " ", 
+              RowBox[{"a", "[", 
+               RowBox[{"[", 
+                RowBox[{"n", " ", "-", " ", "k", " ", "+", " ", "1"}], "]"}], 
+               "]"}]}], ",", " ", 
+             RowBox[{"{", 
+              RowBox[{"k", ",", " ", "1", ",", " ", "n"}], "}"}]}], "]"}], "/",
+            "n"}], "]"}]}], ",", "\n", "    ", 
+        RowBox[{"{", 
+         RowBox[{"n", ",", " ", "1", ",", " ", 
+          RowBox[{"count", " ", "-", " ", "1"}]}], "}"}]}], "]"}], ";", "\n", 
+      " ", "a"}]}], "\n", " ", "]"}]}], ";"}], "\n", 
+ RowBox[{"etaProductExample", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", " ", "24"}], "}"}], "}"}], ",", " ", "8"}], 
+  "]"}]}], "Input",
+ CellTags->"input-12",ExpressionUUID->"dbd1b3a4-1f93-4bbd-aef5-1da7ada82abf"],
+
+Cell["\<\
+The preceding example is Delta/q. Its first coefficients are {1, -24, 252, \
+-1472, 4830, -6048, -16744, 84480}. These can be checked without any \
+numerical training.\
+\>", "Text",ExpressionUUID->"b4cb8840-9083-419e-8b2c-22609ecb4fcb"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"coefficientChecks", " ", "=", " ", 
+   RowBox[{"TestReport", "[", 
+    RowBox[{"{", "\n", " ", 
+     RowBox[{
+      RowBox[{"VerificationTest", "[", 
+       RowBox[{
+        RowBox[{"etaProductExample", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"{", 
+            RowBox[{"1", ",", " ", "24"}], "}"}], "}"}], ",", " ", "8"}], 
+         "]"}], ",", "\n", "   ", 
+        RowBox[{"{", 
+         RowBox[{"1", ",", " ", 
+          RowBox[{"-", "24"}], ",", " ", "252", ",", " ", 
+          RowBox[{"-", "1472"}], ",", " ", "4830", ",", " ", 
+          RowBox[{"-", "6048"}], ",", " ", 
+          RowBox[{"-", "16744"}], ",", " ", "84480"}], "}"}], ",", " ", 
+        RowBox[{"TestID", " ", "->", " ", "\"\<Delta coefficients\>\""}]}], 
+       "]"}], ",", "\n", " ", 
+      RowBox[{"VerificationTest", "[", 
+       RowBox[{
+        RowBox[{"etaProductExample", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"{", 
+            RowBox[{"1", ",", " ", 
+             RowBox[{"-", "1"}]}], "}"}], "}"}], ",", " ", "8"}], "]"}], ",", 
+        "\n", "   ", 
+        RowBox[{"{", 
+         RowBox[{
+         "1", ",", " ", "1", ",", " ", "2", ",", " ", "3", ",", " ", "5", ",",
+           " ", "7", ",", " ", "11", ",", " ", "15"}], "}"}], ",", " ", 
+        RowBox[{
+        "TestID", " ", "->", " ", "\"\<Partition coefficients\>\""}]}], "]"}],
+       ",", "\n", " ", 
+      RowBox[{"VerificationTest", "[", 
+       RowBox[{
+        RowBox[{"etaProductExample", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"1", ",", " ", "6"}], "}"}], ",", " ", 
+            RowBox[{"{", 
+             RowBox[{"3", ",", " ", "6"}], "}"}]}], "}"}], ",", " ", "12"}], 
+         "]"}], ",", "\n", "   ", 
+        RowBox[{"ValidationData`EtaProductCoefficients", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"1", ",", " ", "6"}], "}"}], ",", " ", 
+            RowBox[{"{", 
+             RowBox[{"3", ",", " ", "6"}], "}"}]}], "}"}], ",", " ", "12"}], 
+         "]"}], ",", "\n", "   ", 
+        RowBox[{
+        "TestID", " ", "->", " ", "\"\<CHL recurrence agreement\>\""}]}], 
+       "]"}]}], "\n", " ", "}"}], "]"}]}], 
+  ";"}], "\n", "coefficientChecks"}], "Input",
+ CellTags->"input-14",ExpressionUUID->"b2bc43d4-33ae-45d0-973b-2bb40e11ec46"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["4. Eta: choose weights and generate examples", "Section",ExpressionUUID->"b44c1537-91e2-48d7-a7df-ed75eb1fcc37"],
+
+Cell["\<\
+Edit etaWeights and coefficientCount here. The generator expects eta \
+exponents, so the conversion Powers -> 2 etaWeights is explicit. This example \
+spans both signs; the recorded eta-negative study uses weights -1/2, -1, ..., \
+-200.\
+\>", "Text",ExpressionUUID->"b1a95a62-476f-454b-be08-8a99645694c9"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"etaWeights", " ", "=", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"-", "3"}], "/", "2"}], ",", " ", 
+     RowBox[{"-", "1"}], ",", " ", 
+     RowBox[{
+      RowBox[{"-", "1"}], "/", "2"}], ",", " ", 
+     RowBox[{"1", "/", "2"}], ",", " ", "1", ",", " ", 
+     RowBox[{"3", "/", "2"}]}], "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"coefficientCount", " ", "=", " ", "30"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"etaSpec", " ", "=", " ", 
+   RowBox[{"<|", 
+    RowBox[{
+     RowBox[{"\"\<Family\>\"", " ", "->", " ", "\"\<Eta\>\""}], ",", " ", 
+     RowBox[{"\"\<Powers\>\"", " ", "->", " ", 
+      RowBox[{"2", " ", "etaWeights"}]}], ",", "\n", "  ", 
+     RowBox[{"\"\<CoefficientCount\>\"", " ", "->", " ", 
+      "coefficientCount"}]}], "|>"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"etaRows", " ", "=", " ", 
+   RowBox[{"ValidationData`GenerateRows", "[", 
+    RowBox[{"\"\<eta_examples\>\"", ",", " ", "etaSpec"}], "]"}]}], ";"}], "\n", 
+ RowBox[{"Dataset", "[", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"<|", 
+      RowBox[{
+       RowBox[{"\"\<ID\>\"", " ", "->", " ", 
+        RowBox[{"#", "[", "\"\<ID\>\"", "]"}]}], ",", " ", 
+       RowBox[{"\"\<Eta exponent\>\"", " ", "->", " ", 
+        RowBox[{"#", "[", "\"\<Power\>\"", "]"}]}], ",", "\n", "  ", 
+       RowBox[{"\"\<Weight\>\"", " ", "->", " ", 
+        RowBox[{"#", "[", "\"\<Target\>\"", "]"}]}], ",", " ", 
+       RowBox[{"\"\<Leading q power\>\"", " ", "->", " ", 
+        RowBox[{
+         RowBox[{"#", "[", "\"\<Metadata\>\"", "]"}], 
+         "[", "\"\<LeadingQPower\>\"", "]"}]}], ",", "\n", "  ", 
+       RowBox[{"\"\<First six coefficients\>\"", " ", "->", " ", 
+        RowBox[{"Take", "[", 
+         RowBox[{
+          RowBox[{"#", "[", "\"\<Coefficients\>\"", "]"}], ",", " ", "6"}], 
+         "]"}]}]}], "|>"}], " ", "&"}], ")"}], " ", "/@", " ", "etaRows"}], 
+  "]"}]}], "Input",
+ CellTags->"input-17",ExpressionUUID->"e6dbf842-c496-48e8-b158-e75196943314"],
+
+Cell[CellGroupData[{
+
+Cell["An analytic reference prediction", "Subsection",ExpressionUUID->"973cd8ae-fcf2-4e71-a281-47f053f3f715"],
+
+Cell["\<\
+For the unit-leading eta series, a1/a0 = -r. Hence its weight is exactly \
+-a1/(2 a0). This identity is useful for checking data and labels. It uses the \
+first two coefficients; it is not an equal-input comparison with an \
+experiment that deliberately omits either of them.\
+\>", "Text",ExpressionUUID->"48576294-ced8-4deb-bab8-ad84b00f955c"],
+
+Cell[BoxData[
+ RowBox[{"Dataset", "[", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"<|", 
+      RowBox[{
+       RowBox[{"\"\<Weight\>\"", " ", "->", " ", 
+        RowBox[{"#", "[", "\"\<Target\>\"", "]"}]}], ",", "\n", "  ", 
+       RowBox[{"\"\<Coefficient-ratio prediction\>\"", " ", "->", " ", 
+        RowBox[{"ValidationData`ExactBaseline", "[", "#", "]"}]}], ",", "\n", 
+       "  ", 
+       RowBox[{"\"\<Exact agreement\>\"", " ", "->", " ", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"ValidationData`ExactBaseline", "[", "#", "]"}], " ", "===",
+           " ", 
+          RowBox[{"#", "[", "\"\<Target\>\"", "]"}]}], ")"}]}]}], "|>"}], " ",
+      "&"}], ")"}], " ", "/@", " ", "etaRows"}], "]"}]], "Input",
+ CellTags->"input-20",ExpressionUUID->"129da50d-a369-465f-ab82-15168f93010d"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["5. CHL eta products", "Section",ExpressionUUID->"0675426e-3d56-466a-a4e0-a38e24d3515d"],
+
+Cell["\<\
+For N = 1, 2, 3, 5, 7, let c_N = 24/(N+1) and f_N = (eta(tau) eta(N \
+tau))^c_N. This is the repository convention k(N)+2 = c_N. The series of \
+f_N^s begins with q^s, and its weight target is c_N s. At N=1 the two eta \
+factors coincide; both must contribute to the coefficient recurrence.\
+\>", "Text",ExpressionUUID->"29967ee5-8fd8-48b7-ba53-3046fe88f50c"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"chlLevel", " ", "=", " ", "3"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"chlPowers", " ", "=", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"-", "3"}], ",", " ", 
+     RowBox[{"-", "2"}], ",", " ", 
+     RowBox[{"-", "1"}], ",", " ", "1", ",", " ", "2", ",", " ", "3"}], 
+    "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"chlSpec", " ", "=", " ", 
+   RowBox[{"<|", 
+    RowBox[{
+     RowBox[{"\"\<Family\>\"", " ", "->", " ", "\"\<CHL\>\""}], ",", " ", 
+     RowBox[{"\"\<Level\>\"", " ", "->", " ", "chlLevel"}], ",", "\n", "  ", 
+     RowBox[{"\"\<Powers\>\"", " ", "->", " ", "chlPowers"}], ",", " ", 
+     RowBox[{"\"\<CoefficientCount\>\"", " ", "->", " ", "30"}]}], "|>"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"chlRows", " ", "=", " ", 
+   RowBox[{"ValidationData`GenerateRows", "[", 
+    RowBox[{"\"\<chl_examples\>\"", ",", " ", "chlSpec"}], "]"}]}], ";"}], "\n", 
+ RowBox[{"Dataset", "[", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"<|", 
+      RowBox[{
+       RowBox[{"\"\<Power\>\"", " ", "->", " ", 
+        RowBox[{"#", "[", "\"\<Power\>\"", "]"}]}], ",", " ", 
+       RowBox[{"\"\<Weight\>\"", " ", "->", " ", 
+        RowBox[{"#", "[", "\"\<Target\>\"", "]"}]}], ",", "\n", "  ", 
+       RowBox[{"\"\<Leading q power\>\"", " ", "->", " ", 
+        RowBox[{
+         RowBox[{"#", "[", "\"\<Metadata\>\"", "]"}], 
+         "[", "\"\<LeadingQPower\>\"", "]"}]}], ",", "\n", "  ", 
+       RowBox[{"\"\<First six coefficients\>\"", " ", "->", " ", 
+        RowBox[{"Take", "[", 
+         RowBox[{
+          RowBox[{"#", "[", "\"\<Coefficients\>\"", "]"}], ",", " ", "6"}], 
+         "]"}]}], ",", "\n", "  ", 
+       RowBox[{"\"\<Analytic weight\>\"", " ", "->", " ", 
+        RowBox[{"ValidationData`ExactBaseline", "[", "#", "]"}]}]}], "|>"}], 
+     " ", "&"}], ")"}], " ", "/@", " ", "chlRows"}], "]"}]}], "Input",
+ CellTags->"input-23",ExpressionUUID->"62798f1b-1f7b-483c-bc1c-8c02154e4bac"],
+
+Cell["\<\
+The completed integer CHL training presets retain powers of magnitude 2 \
+through 1000, following the rows selected for those fits. The full \
+coefficient generators can also include power 1, as the small example does. \
+The stored rational lists are bundled separately; reusing them retains their \
+exact values and order.\
+\>", "Text",ExpressionUUID->"301b91cc-194d-4db2-a28a-1e33c5331310"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"datasetPresets", " ", "=", " ", 
+   RowBox[{"Import", "[", 
+    RowBox[{
+     RowBox[{"FileNameJoin", "[", 
+      RowBox[{"{", 
+       RowBox[{
+       "supportDir", ",", " ", "\"\<config\>\"", ",", 
+        " ", "\"\<datasets.json\>\""}], "}"}], "]"}], ",", 
+     " ", "\"\<RawJSON\>\""}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"rationalSpec", " ", "=", " ", 
+   RowBox[{"ValidationData`ResolveDatasetSpec", "[", "\n", "  ", 
+    RowBox[{
+     RowBox[{"datasetPresets", "[", "\"\<chl_N3_positive_rational\>\"", "]"}],
+      ",", " ", "supportDir"}], "]"}]}], ";"}], "\n", 
+ RowBox[{"<|", 
+  RowBox[{
+   RowBox[{"\"\<Number of powers\>\"", " ", "->", " ", 
+    RowBox[{"Length", "[", 
+     RowBox[{"rationalSpec", "[", "\"\<Powers\>\"", "]"}], "]"}]}], ",", "\n",
+    "  ", 
+   RowBox[{"\"\<First five exact powers\>\"", " ", "->", " ", 
+    RowBox[{"Take", "[", 
+     RowBox[{
+      RowBox[{"rationalSpec", "[", "\"\<Powers\>\"", "]"}], ",", " ", "5"}], 
+     "]"}]}], ",", "\n", "  ", 
+   RowBox[{"\"\<Number of distinct powers\>\"", " ", "->", " ", 
+    RowBox[{"Length", "[", 
+     RowBox[{"DeleteDuplicates", "[", 
+      RowBox[{"rationalSpec", "[", "\"\<Powers\>\"", "]"}], "]"}], "]"}]}]}], 
+  "|>"}]}], "Input",
+ CellTags->"input-25",ExpressionUUID->"38f48ed0-17b8-4300-8f74-00d5f240276d"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["6. E2 examples and positive eta powers", "Section",ExpressionUUID->"5b0ea8ff-7309-43c7-8d9e-89b3798bdc3d"],
+
+Cell["\<\
+The repository family used here is 2 E2 eta^(2 w), with E2(q) = 1 - 24 \
+Sum[sigma_1(n) q^n]. It is distinct from E2^p. The former has total weight \
+w+2; the latter has weight 2p for positive integer p. The optional E2 study \
+uses the first family. Its results are separate from the bundled 174 \
+completed fits.\
+\>", "Text",ExpressionUUID->"f5e235b6-359c-463c-8b86-58c74d80c54c"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"e2EtaWeights", " ", "=", " ", 
+   RowBox[{
+    RowBox[{"Range", "[", 
+     RowBox[{"1", ",", " ", "12"}], "]"}], "/", "2"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"e2Spec", " ", "=", " ", 
+   RowBox[{"<|", 
+    RowBox[{
+     RowBox[{"\"\<Family\>\"", " ", "->", " ", "\"\<E2Eta\>\""}], ",", " ", 
+     RowBox[{"\"\<Powers\>\"", " ", "->", " ", "e2EtaWeights"}], ",", "\n", 
+     "  ", 
+     RowBox[{"\"\<CoefficientCount\>\"", " ", "->", " ", "30"}]}], "|>"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"e2Rows", " ", "=", " ", 
+   RowBox[{"ValidationData`GenerateRows", "[", 
+    RowBox[{"\"\<e2eta_examples\>\"", ",", " ", "e2Spec"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"e2PowerRows", " ", "=", " ", 
+   RowBox[{"ValidationData`GenerateRows", "[", 
+    RowBox[{"\"\<e2power_examples\>\"", ",", "\n", "  ", 
+     RowBox[{"<|", 
+      RowBox[{
+       RowBox[{"\"\<Family\>\"", " ", "->", " ", "\"\<E2Power\>\""}], ",", 
+       " ", 
+       RowBox[{"\"\<Powers\>\"", " ", "->", " ", 
+        RowBox[{"Range", "[", 
+         RowBox[{"1", ",", " ", "6"}], "]"}]}], ",", " ", 
+       RowBox[{"\"\<CoefficientCount\>\"", " ", "->", " ", "30"}]}], "|>"}]}],
+     "]"}]}], ";"}], "\n", 
+ RowBox[{"Dataset", "[", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"<|", 
+      RowBox[{
+       RowBox[{"\"\<Eta weight w\>\"", " ", "->", " ", 
+        RowBox[{"#", "[", "\"\<Power\>\"", "]"}]}], ",", " ", 
+       RowBox[{"\"\<Total weight\>\"", " ", "->", " ", 
+        RowBox[{"#", "[", "\"\<Target\>\"", "]"}]}], ",", "\n", "  ", 
+       RowBox[{"\"\<First four coefficients\>\"", " ", "->", " ", 
+        RowBox[{"Take", "[", 
+         RowBox[{
+          RowBox[{"#", "[", "\"\<Coefficients\>\"", "]"}], ",", " ", "4"}], 
+         "]"}]}], ",", "\n", "  ", 
+       RowBox[{"\"\<Analytic total weight\>\"", " ", "->", " ", 
+        RowBox[{"ValidationData`ExactBaseline", "[", "#", "]"}]}]}], "|>"}], 
+     " ", "&"}], ")"}], " ", "/@", " ", "e2Rows"}], "]"}]}], "Input",
+ CellTags->"input-28",ExpressionUUID->"1c269ca9-9496-4b32-ae20-4e4cdcfd9109"],
+
+Cell["\<\
+For 2 E2 eta^(2 w), a0 = 2 and a1/a0 = -24 - 2w, so the total weight is \
+-a1/(2a0) - 10. Keeping the signs and reducing coefficient dynamic range \
+gives an alternative representation to test. This changes the input \
+representation and should be treated as a separate experiment; it does not \
+establish a performance improvement before training.\
+\>", "Text",ExpressionUUID->"2cba7421-ee10-4c51-b9b3-c02e99477d07"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"positiveEtaRows", " ", "=", " ", 
+   RowBox[{"ValidationData`GenerateRows", "[", 
+    RowBox[{"\"\<eta_positive_preview\>\"", ",", "\n", "  ", 
+     RowBox[{"<|", 
+      RowBox[{
+       RowBox[{"\"\<Family\>\"", " ", "->", " ", "\"\<Eta\>\""}], ",", " ", 
+       RowBox[{"\"\<Powers\>\"", " ", "->", " ", 
+        RowBox[{"{", 
+         RowBox[{"1", ",", " ", "10", ",", " ", "100", ",", " ", "400"}], 
+         "}"}]}], ",", " ", 
+       RowBox[{"\"\<CoefficientCount\>\"", " ", "->", " ", "30"}]}], "|>"}]}],
+     "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"rawPreview", " ", "=", " ", 
+   RowBox[{"Lookup", "[", 
+    RowBox[{"positiveEtaRows", ",", " ", "\"\<Coefficients\>\""}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"l2Preview", " ", "=", " ", 
+   RowBox[{"UnifiedTraining`TransformInputs", "[", 
+    RowBox[{"rawPreview", ",", " ", "\"\<L2\>\""}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"signedLogPreview", " ", "=", " ", 
+   RowBox[{"UnifiedTraining`TransformInputs", "[", 
+    RowBox[{"rawPreview", ",", " ", "\"\<SignedLogStandardized\>\""}], 
+    "]"}]}], ";"}], "\n", 
+ RowBox[{"Dataset", "[", 
+  RowBox[{"MapThread", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"<|", 
+      RowBox[{
+       RowBox[{"\"\<Weight\>\"", " ", "->", " ", 
+        RowBox[{"#", "1"}]}], ",", " ", 
+       RowBox[{"\"\<First two L2 features\>\"", " ", "->", " ", 
+        RowBox[{"Take", "[", 
+         RowBox[{
+          RowBox[{"#", "2"}], ",", " ", "2"}], "]"}]}], ",", "\n", "  ", 
+       RowBox[{"\"\<First two signed-log features before standardization\>\"",
+         " ", "->", " ", 
+        RowBox[{"Take", "[", 
+         RowBox[{
+          RowBox[{"#", "3"}], ",", " ", "2"}], "]"}]}]}], "|>"}], " ", "&"}], 
+    ",", "\n", "  ", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"Lookup", "[", 
+       RowBox[{"positiveEtaRows", ",", " ", "\"\<Target\>\""}], "]"}], ",", 
+      " ", "l2Preview", ",", " ", "signedLogPreview"}], "}"}]}], "]"}], 
+  "]"}]}], "Input",
+ CellTags->"input-30",ExpressionUUID->"ab4fe4cb-3784-4e68-9bed-456994c7a846"],
+
+Cell["\<\
+The signed-log values above are sign(a_n/a0) log(1+|a_n/a0|). Coordinate \
+means and standard deviations are fitted later using training rows only. L2 \
+normalization preserves the exact coefficient ratio, but may make its \
+individual entries very small. Log-magnitude preprocessing discards signs; \
+its treatment of zero coefficients is recorded in the training settings.\
+\>", "Text",ExpressionUUID->"bbc6cfcd-061f-4322-99ad-6000546f8e00"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["7. Retained coefficients and dataset export", "Section",ExpressionUUID->"b82405b8-e645-40f4-ba76-ddf878faf146"],
+
+Cell["\<\
+Positions in a dataset specification are zero-based q degrees. \
+FeaturePositions in the training notebook are one-based positions in the \
+stored coefficient vector. A single selected set is shared by all rows. Keep \
+this distinction when experimenting with missing coefficients.\
+\>", "Text",ExpressionUUID->"8b4d5122-5bf4-4e47-9e41-eb1510d99686"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"slicePositions", " ", "=", " ", 
+   RowBox[{"BlockRandom", "[", 
+    RowBox[{
+     RowBox[{"SeedRandom", "[", "31415", "]"}], ";", " ", 
+     RowBox[{"Sort", "[", 
+      RowBox[{"RandomSample", "[", 
+       RowBox[{
+        RowBox[{"Range", "[", 
+         RowBox[{"0", ",", " ", "29"}], "]"}], ",", " ", "15"}], "]"}], 
+      "]"}]}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"slicedSpec", " ", "=", " ", 
+   RowBox[{"Join", "[", 
+    RowBox[{"chlSpec", ",", " ", 
+     RowBox[{"<|", 
+      RowBox[{"\"\<Positions\>\"", " ", "->", " ", "slicePositions"}], 
+      "|>"}]}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"slicedRows", " ", "=", " ", 
+   RowBox[{"ValidationData`GenerateRows", "[", 
+    RowBox[{"\"\<chl_slice_example\>\"", ",", " ", "slicedSpec"}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{"<|", 
+  RowBox[{
+   RowBox[{"\"\<Retained q degrees\>\"", " ", "->", " ", 
+    RowBox[{
+     RowBox[{"slicedRows", "[", 
+      RowBox[{"[", "1", "]"}], "]"}], "[", "\"\<Positions\>\"", "]"}]}], ",", 
+   "\n", "  ", 
+   RowBox[{"\"\<Vector length\>\"", " ", "->", " ", 
+    RowBox[{"Length", "[", 
+     RowBox[{
+      RowBox[{"slicedRows", "[", 
+       RowBox[{"[", "1", "]"}], "]"}], "[", "\"\<Coefficients\>\"", "]"}], 
+     "]"}]}]}], "|>"}]}], "Input",
+ CellTags->"input-34",ExpressionUUID->"8da2c0ca-318c-4d68-9738-856f637ab52d"],
+
+Cell["\<\
+To save a dataset, set exportData to True and evaluate the next cell. \
+GetDataset writes an exact WXF cache plus coefficient and metadata CSVs. The \
+file identity incorporates the exact specification and generator source. It \
+reloads a matching dataset instead of regenerating it. No dataset is exported \
+by default.\
+\>", "Text",ExpressionUUID->"90fceea3-7e67-46f0-9d80-6efa415ed20c"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"exportData", " ", "=", " ", "False"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"datasetToExport", " ", "=", " ", "\"\<eta_examples\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"specToExport", " ", "=", " ", "etaSpec"}], ";"}], "\n", 
+ RowBox[{"If", "[", 
+  RowBox[{
+   RowBox[{"TrueQ", "[", "exportData", "]"}], ",", "\n", " ", 
+   RowBox[{
+    RowBox[{"exportedDataset", " ", "=", " ", 
+     RowBox[{"ValidationData`GetDataset", "[", 
+      RowBox[{
+      "datasetToExport", ",", " ", "specToExport", ",", "\n", "   ", 
+       "supportDir", ",", " ", 
+       RowBox[{"FileNameJoin", "[", 
+        RowBox[{"{", 
+         RowBox[{"outputRoot", ",", " ", "\"\<data\>\""}], "}"}], "]"}]}], 
+      "]"}]}], ";", "\n", " ", 
+    RowBox[{"If", "[", 
+     RowBox[{
+      RowBox[{"FailureQ", "[", "exportedDataset", "]"}], ",", " ", 
+      "exportedDataset", ",", " ", 
+      RowBox[{"exportedDataset", "[", "\"\<Files\>\"", "]"}]}], "]"}]}], ",", 
+   "\n", " ", "\"\<Set exportData = True to save this dataset.\>\""}], "\n", 
+  " ", "]"}]}], "Input",
+ CellTags->"input-36",ExpressionUUID->"9944473a-4de1-4f81-a4e7-7f4db6eb8568"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["8. Add another exact family", "Section",ExpressionUUID->"399de724-bf20-48cb-ba8a-2d44c8d6382f"],
+
+Cell["\<\
+The row association is the interface to the training notebook. Supply a \
+unique ID, a Group shared by related examples, an explicit Target, \
+coefficient values and their positions. For a custom family use \
+StandardizedWeight, which reads Target directly. The following example \
+multiplies E4 by eta^(2w). Editing only the displayed formula above does not \
+change a generator: edit the coefficient definition and the target together.\
+\>", "Text",ExpressionUUID->"8b1d8ca5-4ad9-4690-bab6-7a88a8fcea29"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Clear", "[", "e4EtaRow", "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"e4EtaRow", "[", 
+    RowBox[{
+     RowBox[{"w", "_"}], ",", " ", 
+     RowBox[{"count", "_", 
+      RowBox[{"Integer", "?", "Positive"}]}]}], "]"}], " ", ":=", " ", 
+   RowBox[{"Module", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"eta", ",", " ", "e4", ",", " ", "c"}], "}"}], ",", "\n", " ", 
+     RowBox[{
+      RowBox[{"eta", " ", "=", " ", 
+       RowBox[{"ValidationData`EtaProductCoefficients", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"{", 
+           RowBox[{"1", ",", " ", 
+            RowBox[{"2", " ", "w"}]}], "}"}], "}"}], ",", " ", "count"}], 
+        "]"}]}], ";", "\n", " ", 
+      RowBox[{"e4", " ", "=", " ", 
+       RowBox[{"Prepend", "[", 
+        RowBox[{
+         RowBox[{"Table", "[", 
+          RowBox[{
+           RowBox[{"240", " ", 
+            RowBox[{"DivisorSigma", "[", 
+             RowBox[{"3", ",", " ", "n"}], "]"}]}], ",", " ", 
+           RowBox[{"{", 
+            RowBox[{"n", ",", " ", "1", ",", " ", 
+             RowBox[{"count", " ", "-", " ", "1"}]}], "}"}]}], "]"}], ",", 
+         " ", "1"}], "]"}]}], ";", "\n", " ", 
+      RowBox[{"c", " ", "=", " ", 
+       RowBox[{"Table", "[", 
+        RowBox[{
+         RowBox[{"Sum", "[", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"e4", "[", 
+             RowBox[{"[", 
+              RowBox[{"j", " ", "+", " ", "1"}], "]"}], "]"}], " ", 
+            RowBox[{"eta", "[", 
+             RowBox[{"[", 
+              RowBox[{"n", " ", "-", " ", "j", " ", "+", " ", "1"}], "]"}], 
+             "]"}]}], ",", " ", 
+           RowBox[{"{", 
+            RowBox[{"j", ",", " ", "0", ",", " ", "n"}], "}"}]}], "]"}], ",", 
+         " ", 
+         RowBox[{"{", 
+          RowBox[{"n", ",", " ", "0", ",", " ", 
+           RowBox[{"count", " ", "-", " ", "1"}]}], "}"}]}], "]"}]}], ";", 
+      "\n", " ", 
+      RowBox[{"<|", 
+       RowBox[{
+        RowBox[{"\"\<ID\>\"", " ", "->", " ", 
+         RowBox[{"\"\<e4eta-\>\"", " ", "<>", " ", 
+          RowBox[{"ToString", "[", 
+           RowBox[{"w", ",", " ", "InputForm"}], "]"}]}]}], ",", "\n", "   ", 
+        
+        RowBox[{"\"\<Group\>\"", " ", "->", " ", 
+         RowBox[{"\"\<e4eta-parent-\>\"", " ", "<>", " ", 
+          RowBox[{"ToString", "[", 
+           RowBox[{"w", ",", " ", "InputForm"}], "]"}]}]}], ",", "\n", "   ", 
+        
+        RowBox[{"\"\<Family\>\"", " ", "->", " ", "\"\<E4Eta\>\""}], ",", " ", 
+        RowBox[{"\"\<Power\>\"", " ", "->", " ", "w"}], ",", " ", 
+        RowBox[{"\"\<Target\>\"", " ", "->", " ", 
+         RowBox[{"w", " ", "+", " ", "4"}]}], ",", "\n", "   ", 
+        RowBox[{"\"\<Coefficients\>\"", " ", "->", " ", "c"}], ",", " ", 
+        RowBox[{"\"\<Positions\>\"", " ", "->", " ", 
+         RowBox[{"Range", "[", 
+          RowBox[{"0", ",", " ", 
+           RowBox[{"count", " ", "-", " ", "1"}]}], "]"}]}], ",", "\n", "   ", 
+        RowBox[{"\"\<Metadata\>\"", " ", "->", " ", 
+         RowBox[{"<|", 
+          RowBox[{
+           RowBox[{"\"\<LeadingQPower\>\"", " ", "->", " ", 
+            RowBox[{"w", "/", "12"}]}], ",", " ", 
+           
+           RowBox[{"\"\<TargetDefinition\>\"", " ", "->", 
+            " ", "\"\<eta weight + 4\>\""}]}], "|>"}]}]}], "|>"}]}]}], "\n", 
+    " ", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"customRows", " ", "=", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"e4EtaRow", "[", 
+      RowBox[{"#", ",", " ", "30"}], "]"}], " ", "&"}], " ", "/@", " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"Range", "[", 
+       RowBox[{"1", ",", " ", "80"}], "]"}], "/", "2"}], ")"}]}]}], ";"}], "\n", 
+ RowBox[{"Dataset", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"KeyTake", "[", 
+     RowBox[{"#", ",", " ", 
+      RowBox[{"{", 
+       RowBox[{"\"\<ID\>\"", ",", " ", "\"\<Group\>\"", ",", 
+        " ", "\"\<Target\>\""}], "}"}]}], "]"}], " ", "&"}], " ", "/@", " ", 
+   RowBox[{"Take", "[", 
+    RowBox[{"customRows", ",", " ", "5"}], "]"}]}], "]"}]}], "Input",
+ CellTags->"input-39",ExpressionUUID->"8f03cd1c-0a9e-4175-a54f-1a41c6c75b3d"],
+
+Cell["\<\
+Eighty distinct parent groups are supplied here so a train/validation/test \
+split is possible. To use these rows in notebook 2, save them with the \
+optional cell below and follow its custom-data section. If several rows come \
+from the same parent form, give them the same Group. Changing the coefficient \
+definition or target creates a new experiment.\
+\>", "Text",ExpressionUUID->"7c3c6219-eaa2-4ca0-9f85-58308af2ee7f"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"exportCustomRows", " ", "=", " ", "False"}], ";"}], "\n", 
+ RowBox[{"If", "[", 
+  RowBox[{
+   RowBox[{"TrueQ", "[", "exportCustomRows", "]"}], ",", "\n", " ", 
+   RowBox[{
+    RowBox[{"customDirectory", " ", "=", " ", 
+     RowBox[{"FileNameJoin", "[", 
+      RowBox[{"{", 
+       RowBox[{"outputRoot", ",", " ", "\"\<data\>\""}], "}"}], "]"}]}], ";", 
+    "\n", " ", 
+    RowBox[{"If", "[", 
+     RowBox[{
+      RowBox[{"!", 
+       RowBox[{"DirectoryQ", "[", "customDirectory", "]"}]}], ",", " ", 
+      RowBox[{"CreateDirectory", "[", 
+       RowBox[{"customDirectory", ",", " ", 
+        RowBox[{"CreateIntermediateDirectories", " ", "->", " ", "True"}]}], 
+       "]"}]}], "]"}], ";", "\n", " ", 
+    RowBox[{"Export", "[", 
+     RowBox[{
+      RowBox[{"FileNameJoin", "[", 
+       RowBox[{"{", 
+        RowBox[{"customDirectory", ",", " ", "\"\<custom_rows.wxf\>\""}], 
+        "}"}], "]"}], ",", " ", "customRows", ",", " ", "\"\<WXF\>\""}], 
+     "]"}]}], ",", "\n", 
+   " ", "\"\<Set exportCustomRows = True to save custom_rows.wxf.\>\""}], 
+  "\n", " ", "]"}]}], "Input",
+ CellTags->"input-41",ExpressionUUID->"e8fd0cc7-9aca-484b-bc8c-15e612c88d5b"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["9. Reference and next step", "Section",ExpressionUUID->"7b4573a7-8de2-4a13-8979-37223db43247"],
+
+Cell["\<\
+Repository: https://github.com/abinash7s/ml_modular_forms (source snapshot \
+3159005815d40e6542432e2d7969f980f56e9f01). Wolfram function conventions: \
+https://reference.wolfram.com/language/ref/DedekindEta.html and \
+https://reference.wolfram.com/language/ref/EllipticTheta.html. Continue with \
+notebook 2 to train an example, or notebook 3 to inspect completed results. \
+Notebook 4 treats theta products and Jacobi coefficients separately.\
+\>", "Text",ExpressionUUID->"de6b8ba5-83ce-429a-a11a-f3eec531ff99"]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{1100, 850},
+WindowMargins->{{Automatic, Automatic}, {Automatic, Automatic}},
+WindowTitle->"Data and mathematical definitions",
+ShowCellBracket->True,
+TaggingRules-><|"Bundle" -> "ModularFormsNotebooks", "NotebookNumber" -> 1|>,
+CellContext->Notebook,
+Magnification->1.,
+FrontEndVersion->"14.3 for Mac OS X ARM (64-bit) (July 8, 2025)",
+StyleDefinitions->Notebook[{
+   Cell[
+    StyleData[StyleDefinitions -> "Default.nb"]], 
+   Cell[
+    StyleData["Title"], CellMargins -> {{36, 24}, {12, 28}}, FontFamily -> 
+    "Helvetica", FontSize -> 28, FontWeight -> "Plain", FontColor -> 
+    RGBColor[0.16, 0.23, 0.31]], 
+   Cell[
+    StyleData["Subtitle"], CellMargins -> {{36, 24}, {18, 0}}, FontFamily -> 
+    "Helvetica", FontSize -> 14, FontColor -> GrayLevel[0.4]], 
+   Cell[
+    StyleData["Section"], CellMargins -> {{36, 24}, {10, 24}}, FontFamily -> 
+    "Helvetica", FontSize -> 21, FontColor -> RGBColor[0.16, 0.23, 0.31]], 
+   Cell[
+    StyleData["Subsection"], CellMargins -> {{36, 24}, {8, 18}}, FontFamily -> 
+    "Helvetica", FontSize -> 16, FontColor -> GrayLevel[0.22]], 
+   Cell[
+    StyleData["Text"], CellMargins -> {{36, 30}, {9, 7}}, 
+    LineSpacing -> {1.15, 2}, FontFamily -> "Helvetica", FontSize -> 13], 
+   Cell[
+    StyleData["Input"], CellMargins -> {{54, 24}, {9, 9}}, FontSize -> 12], 
+   Cell[
+    StyleData["Output"], CellMargins -> {{54, 24}, {9, 5}}, FontSize -> 12]}, 
+  Visible -> False, FrontEndVersion -> 
+  "14.3 for Mac OS X ARM (64-bit) (July 8, 2025)", StyleDefinitions -> 
+  "Default.nb"],
+ExpressionUUID->"0445d07d-f5da-4a1d-99c5-52ec003a5a85"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{
+ "input-5"->{
+  Cell[1795, 49, 1159, 34, 143, "Input",ExpressionUUID->"0cd67df4-033d-45c9-9c9f-4456439de6da",
+   InitializationCell->True,
+   CellTags->"input-5"]},
+ "input-8"->{
+  Cell[3554, 98, 2464, 64, 146, "Input",ExpressionUUID->"ddf59177-f50a-4adc-84e3-e44d70222a6c",
+   CellTags->"input-8"]},
+ "input-12"->{
+  Cell[7352, 189, 3192, 85, 240, "Input",ExpressionUUID->"dbd1b3a4-1f93-4bbd-aef5-1da7ada82abf",
+   CellTags->"input-12"]},
+ "input-14"->{
+  Cell[10796, 282, 2436, 62, 70, "Input",ExpressionUUID->"b2bc43d4-33ae-45d0-973b-2bb40e11ec46",
+   CellTags->"input-14"]},
+ "input-17"->{
+  Cell[13708, 358, 2005, 49, 70, "Input",ExpressionUUID->"e6dbf842-c496-48e8-b158-e75196943314",
+   CellTags->"input-17"]},
+ "input-20"->{
+  Cell[16207, 420, 819, 19, 70, "Input",ExpressionUUID->"129da50d-a369-465f-ab82-15168f93010d",
+   CellTags->"input-20"]},
+ "input-23"->{
+  Cell[17543, 454, 1953, 46, 70, "Input",ExpressionUUID->"62798f1b-1f7b-483c-bc1c-8c02154e4bac",
+   CellTags->"input-23"]},
+ "input-25"->{
+  Cell[19904, 510, 1337, 33, 70, "Input",ExpressionUUID->"38f48ed0-17b8-4300-8f74-00d5f240276d",
+   CellTags->"input-25"]},
+ "input-28"->{
+  Cell[21789, 558, 2085, 50, 70, "Input",ExpressionUUID->"1c269ca9-9496-4b32-ae20-4e4cdcfd9109",
+   CellTags->"input-28"]},
+ "input-30"->{
+  Cell[24307, 618, 2084, 52, 70, "Input",ExpressionUUID->"ab4fe4cb-3784-4e68-9bed-456994c7a846",
+   CellTags->"input-30"]},
+ "input-34"->{
+  Cell[27367, 692, 1368, 37, 70, "Input",ExpressionUUID->"8da2c0ca-318c-4d68-9738-856f637ab52d",
+   CellTags->"input-34"]},
+ "input-36"->{
+  Cell[29140, 739, 1148, 27, 70, "Input",ExpressionUUID->"9944473a-4de1-4f81-a4e7-7f4db6eb8568",
+   CellTags->"input-36"]},
+ "input-39"->{
+  Cell[30948, 782, 4125, 105, 70, "Input",ExpressionUUID->"8f03cd1c-0a9e-4175-a54f-1a41c6c75b3d",
+   CellTags->"input-39"]},
+ "input-41"->{
+  Cell[35513, 897, 1195, 29, 70, "Input",ExpressionUUID->"e8fd0cc7-9aca-484b-bc8c-15e612c88d5b",
+   CellTags->"input-41"]}
+ }
+*)
+(*CellTagsIndex
+CellTagsIndex->{
+ {"input-5", 39107, 985},
+ {"input-8", 39272, 989},
+ {"input-12", 39409, 992},
+ {"input-14", 39548, 995},
+ {"input-17", 39687, 998},
+ {"input-20", 39826, 1001},
+ {"input-23", 39964, 1004},
+ {"input-25", 40103, 1007},
+ {"input-28", 40242, 1010},
+ {"input-30", 40381, 1013},
+ {"input-34", 40520, 1016},
+ {"input-36", 40659, 1019},
+ {"input-39", 40798, 1022},
+ {"input-41", 40938, 1025}
+ }
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[623, 23, 105, 0, 68, "Title",ExpressionUUID->"af0f84c5-5af2-4436-9f1b-a43de77b03aa"],
+Cell[731, 25, 114, 0, 32, "Subtitle",ExpressionUUID->"b27bd187-3fcf-4142-a89e-18355530f476"],
+Cell[848, 27, 464, 9, 45, "Text",ExpressionUUID->"23f48452-04bb-4ba3-9477-a7798fca8fba"],
+Cell[CellGroupData[{
+Cell[1337, 40, 82, 0, 60, "Section",ExpressionUUID->"1412e4ee-47a0-4c3d-bf8e-77b3e0acaa2e"],
+Cell[1422, 42, 370, 5, 45, "Text",ExpressionUUID->"b1576916-9a89-4b09-ba4e-9bcdb85364ae"],
+Cell[1795, 49, 1159, 34, 143, "Input",ExpressionUUID->"0cd67df4-033d-45c9-9c9f-4456439de6da",
+ InitializationCell->True,
+ CellTags->"input-5"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2991, 88, 115, 0, 60, "Section",ExpressionUUID->"06278556-ba7e-4591-8110-b8bf866c5699"],
+Cell[3109, 90, 442, 6, 62, "Text",ExpressionUUID->"eda29639-cb10-4f22-a192-1b1f6910186c"],
+Cell[3554, 98, 2464, 64, 146, "Input",ExpressionUUID->"ddf59177-f50a-4adc-84e3-e44d70222a6c",
+ CellTags->"input-8"],
+Cell[6021, 164, 498, 7, 62, "Text",ExpressionUUID->"3c409327-f6b6-40ce-bab8-12f41d51e29b"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[6556, 176, 119, 0, 60, "Section",ExpressionUUID->"ce97df03-9110-44fe-bb67-8013be01fac8"],
+Cell[6678, 178, 671, 9, 79, "Text",ExpressionUUID->"019f5163-0661-4883-b192-6f3899e4e679"],
+Cell[7352, 189, 3192, 85, 240, "Input",ExpressionUUID->"dbd1b3a4-1f93-4bbd-aef5-1da7ada82abf",
+ CellTags->"input-12"],
+Cell[10547, 276, 246, 4, 70, "Text",ExpressionUUID->"b4cb8840-9083-419e-8b2c-22609ecb4fcb"],
+Cell[10796, 282, 2436, 62, 70, "Input",ExpressionUUID->"b2bc43d4-33ae-45d0-973b-2bb40e11ec46",
+ CellTags->"input-14"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[13269, 349, 118, 0, 70, "Section",ExpressionUUID->"b44c1537-91e2-48d7-a7df-ed75eb1fcc37"],
+Cell[13390, 351, 315, 5, 70, "Text",ExpressionUUID->"b1a95a62-476f-454b-be08-8a99645694c9"],
+Cell[13708, 358, 2005, 49, 70, "Input",ExpressionUUID->"e6dbf842-c496-48e8-b158-e75196943314",
+ CellTags->"input-17"],
+Cell[CellGroupData[{
+Cell[15738, 411, 109, 0, 70, "Subsection",ExpressionUUID->"973cd8ae-fcf2-4e71-a281-47f053f3f715"],
+Cell[15850, 413, 354, 5, 70, "Text",ExpressionUUID->"48576294-ced8-4deb-bab8-ad84b00f955c"],
+Cell[16207, 420, 819, 19, 70, "Input",ExpressionUUID->"129da50d-a369-465f-ab82-15168f93010d",
+ CellTags->"input-20"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[17075, 445, 93, 0, 70, "Section",ExpressionUUID->"0675426e-3d56-466a-a4e0-a38e24d3515d"],
+Cell[17171, 447, 369, 5, 70, "Text",ExpressionUUID->"29967ee5-8fd8-48b7-ba53-3046fe88f50c"],
+Cell[17543, 454, 1953, 46, 70, "Input",ExpressionUUID->"62798f1b-1f7b-483c-bc1c-8c02154e4bac",
+ CellTags->"input-23"],
+Cell[19499, 502, 402, 6, 70, "Text",ExpressionUUID->"301b91cc-194d-4db2-a28a-1e33c5331310"],
+Cell[19904, 510, 1337, 33, 70, "Input",ExpressionUUID->"38f48ed0-17b8-4300-8f74-00d5f240276d",
+ CellTags->"input-25"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[21278, 548, 112, 0, 70, "Section",ExpressionUUID->"5b0ea8ff-7309-43c7-8d9e-89b3798bdc3d"],
+Cell[21393, 550, 393, 6, 70, "Text",ExpressionUUID->"f5e235b6-359c-463c-8b86-58c74d80c54c"],
+Cell[21789, 558, 2085, 50, 70, "Input",ExpressionUUID->"1c269ca9-9496-4b32-ae20-4e4cdcfd9109",
+ CellTags->"input-28"],
+Cell[23877, 610, 427, 6, 70, "Text",ExpressionUUID->"2cba7421-ee10-4c51-b9b3-c02e99477d07"],
+Cell[24307, 618, 2084, 52, 70, "Input",ExpressionUUID->"ab4fe4cb-3784-4e68-9bed-456994c7a846",
+ CellTags->"input-30"],
+Cell[26394, 672, 453, 6, 70, "Text",ExpressionUUID->"bbc6cfcd-061f-4322-99ad-6000546f8e00"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[26884, 683, 117, 0, 70, "Section",ExpressionUUID->"b82405b8-e645-40f4-ba76-ddf878faf146"],
+Cell[27004, 685, 360, 5, 70, "Text",ExpressionUUID->"8b4d5122-5bf4-4e47-9e41-eb1510d99686"],
+Cell[27367, 692, 1368, 37, 70, "Input",ExpressionUUID->"8da2c0ca-318c-4d68-9738-856f637ab52d",
+ CellTags->"input-34"],
+Cell[28738, 731, 399, 6, 70, "Text",ExpressionUUID->"90fceea3-7e67-46f0-9d80-6efa415ed20c"],
+Cell[29140, 739, 1148, 27, 70, "Input",ExpressionUUID->"9944473a-4de1-4f81-a4e7-7f4db6eb8568",
+ CellTags->"input-36"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[30325, 771, 101, 0, 70, "Section",ExpressionUUID->"399de724-bf20-48cb-ba8a-2d44c8d6382f"],
+Cell[30429, 773, 516, 7, 70, "Text",ExpressionUUID->"8b1d8ca5-4ad9-4690-bab6-7a88a8fcea29"],
+Cell[30948, 782, 4125, 105, 70, "Input",ExpressionUUID->"8f03cd1c-0a9e-4175-a54f-1a41c6c75b3d",
+ CellTags->"input-39"],
+Cell[35076, 889, 434, 6, 70, "Text",ExpressionUUID->"7c3c6219-eaa2-4ca0-9f85-58308af2ee7f"],
+Cell[35513, 897, 1195, 29, 70, "Input",ExpressionUUID->"e8fd0cc7-9aca-484b-bc8c-15e612c88d5b",
+ CellTags->"input-41"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[36745, 931, 100, 0, 70, "Section",ExpressionUUID->"7b4573a7-8de2-4a13-8979-37223db43247"],
+Cell[36848, 933, 522, 7, 70, "Text",ExpressionUUID->"de6b8ba5-83ce-429a-a11a-f3eec531ff99"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
+

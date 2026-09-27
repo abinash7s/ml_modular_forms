@@ -1,0 +1,191 @@
+% Requires amsmath and booktabs. No document preamble.
+\section{Additional validation}
+\label{app:additional-validation}
+
+This study examines width, depth and optimizer dependence on two representative power families. The planned depth/width study comprises $78$ seeded neural fits. This report contains $78$ distinct completed fits. Uniform networks have one, three or six hidden ReLU layers; the original Net1 and Net3 are included as references. The wider and deeper architectures are compared on the same data splits and training budget within each study.
+
+All test metrics are evaluated after predictions have been returned to the signed physical weight $w$:
+\begin{align}
+ \mathrm{MAPE} &= \frac{100}{n}\sum_{i=1}^n
+              \frac{|\widehat w_i-w_i|}{|w_i|},\\
+ \mathrm{RMSE} &= \sqrt{\frac1n\sum_{i=1}^n(\widehat w_i-w_i)^2}.
+\end{align}
+The CHL datasets have nonzero weights. Thus their MAPE requires no omission of
+zero targets and is not a percentage error of a logarithm. When a logarithmic
+target is fitted, its transformation is inverted before these metrics are
+computed, including the known sign and family-dependent conversion from power
+to weight. Training and validation losses remain in the fitted target space;
+their numerical values should not be compared across different target transformations.
+Recorded input transformations: \texttt{L2}, \texttt{LogAbsL2}. Recorded target transformations:
+\texttt{LogAbsPower}, \texttt{StandardizedWeight}. Recorded training budgets: 10000 rounds.
+For \texttt{LogAbsL2}, coefficient magnitudes are logged and the resulting vector is normalized to unit Euclidean norm; exactly zero coefficients are mapped to zero while retaining their positions.
+For \texttt{L2}, raw coefficient vectors are normalized to unit Euclidean norm.
+Standardized weights use only the training-set mean and sample standard deviation; the same transformation is applied to validation and test data.
+For \texttt{LogAbsPower}, the fitted target is $\log|s|$, where $s$ is the power; a predicted value $z$ is decoded as $\widehat w=\operatorname{sgn}(s)K_0 e^z$, with the known weight $K_0$ of the parent form.
+The final checkpoint and the checkpoint minimizing validation loss are reported
+separately. Test errors play no part in checkpoint selection. Error bars are sample
+standard deviations over training seeds on fixed data partitions, not confidence
+intervals over alternative partitions or modular-form families.
+
+\paragraph{Positive CHL powers, $N=3$.}
+
+Among completed three-seed configurations, the lowest mean validation-selected test MAPE is obtained by Net3 with ADAM: $0.400\pm0.0987$\%.
+
+Among completed three-seed configurations, the lowest mean validation-selected test RMSE is obtained by Net3 with ADAM: $12.8\pm2.35$.
+
+The same configuration minimizes both reported mean test metrics within this grid.
+
+At width $16$ with RMSProp, changing from one to three hidden layers changes mean test MAPE from $5.06\%$ to $0.851\%$, and mean test RMSE from $148$ to $34.0$.
+
+At width $128$ with RMSProp, changing from one to three hidden layers changes mean test MAPE from $0.699\%$ to $0.765\%$, and mean test RMSE from $31.2$ to $33.5$.
+
+For $1\times 128$, Adam and RMSProp respectively give mean test MAPE $3.73\%$ and $0.699\%$, and mean test RMSE $113$ and $31.2$. This comparison concerns the recorded optimizer settings, not independently tuned optimizer families.
+
+For Net3, Adam and RMSProp respectively give mean test MAPE $0.400\%$ and $0.998\%$, and mean test RMSE $12.8$ and $40.3$. This comparison concerns the recorded optimizer settings, not independently tuned optimizer families.
+
+Comparisons of different depths also change parameter count; they do not isolate depth at fixed capacity. Test rankings are descriptive and are not used to choose checkpoints or tune hyperparameters.
+
+\paragraph{Negative eta powers.}
+
+Among completed three-seed configurations, the lowest mean validation-selected test MAPE is obtained by $6\times 128$ with ADAM: $0.0509\pm0.00801$\%.
+
+Among completed three-seed configurations, the lowest mean validation-selected test RMSE is obtained by $6\times 128$ with ADAM: $0.0345\pm0.00147$.
+
+The same configuration minimizes both reported mean test metrics within this grid.
+
+At width $16$ with ADAM, changing from one to three hidden layers changes mean test MAPE from $1.29\%$ to $0.316\%$, and mean test RMSE from $0.725$ to $0.260$.
+
+At width $128$ with ADAM, changing from one to three hidden layers changes mean test MAPE from $0.153\%$ to $0.0510\%$, and mean test RMSE from $0.0698$ to $0.0392$.
+
+For $1\times 128$, Adam and RMSProp respectively give mean test MAPE $0.153\%$ and $0.185\%$, and mean test RMSE $0.0698$ and $0.160$. This comparison concerns the recorded optimizer settings, not independently tuned optimizer families.
+
+For Net1, Adam and RMSProp respectively give mean test MAPE $42.6\%$ and $0.147\%$, and mean test RMSE $20.1$ and $0.123$. This comparison concerns the recorded optimizer settings, not independently tuned optimizer families.
+
+Comparisons of different depths also change parameter count; they do not isolate depth at fixed capacity. Test rankings are descriptive and are not used to choose checkpoints or tune hyperparameters.
+
+\paragraph{Training budget and checkpoint choice.}
+
+Both checkpoint conventions are tabulated. The largest ratio of final to validation-selected mean test RMSE among complete configurations is $10.1$, for Positive CHL powers, $N=3$, Net3, ADAM ($129$ versus $12.8$). Validation selection does not guarantee lower error on every held-out test set.
+
+\paragraph{Capacity and interpolation.}
+
+At the final checkpoint, $2$ of $78$ completed fits have training NRMSE at most $10^{-3}$, with NRMSE normalized by the training-set standard deviation of the physical weight. This threshold is a numerical convention for near interpolation. A double-descent claim would additionally require a reproducible test-error peak near a resolved interpolation transition and a subsequent decline. Neither having more parameters than examples nor an isolated non-monotone error curve establishes that claim.
+
+\clearpage
+\subsection{Validation-selected checkpoints}
+\begin{table}[!htbp]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.18}
+\begin{tabular}{@{}llrrrrrr@{}}
+\toprule
+$D\times h$ / model & Optimizer & $P$ & $n$ & Train loss & Val.\ loss & MAPE (\%) & RMSE \\
+\midrule
+$1\times 1$ & RMSProp & 33 & 3 & $0.620$ & $0.826$ & $102\pm74.8$ & $1406\pm875$ \\
+$1\times 4$ & RMSProp & 129 & 3 & $0.321$ & $0.425$ & $55.8\pm77.5$ & $839\pm934$ \\
+$1\times 8$ & RMSProp & 257 & 3 & $0.00498$ & $0.00444$ & $5.54\pm2.27$ & $165\pm66.6$ \\
+$1\times 16$ & RMSProp & 513 & 3 & $0.00436$ & $0.00404$ & $5.06\pm2.92$ & $148\pm83.6$ \\
+$1\times 24$ & RMSProp & 769 & 3 & $7.13\times10^{-4}$ & $8.33\times10^{-4}$ & $2.07\pm0.681$ & $62.4\pm21.2$ \\
+$3\times 16$ & RMSProp & 1057 & 3 & $9.44\times10^{-5}$ & $1.17\times10^{-4}$ & $0.851\pm0.0594$ & $34.0\pm0.871$ \\
+$6\times 16$ & RMSProp & 1873 & 3 & $1.99\times10^{-4}$ & $1.75\times10^{-4}$ & $1.19\pm0.0621$ & $49.2\pm9.92$ \\
+$1\times 128$ & ADAM & 4097 & 3 & $0.00286$ & $0.00277$ & $3.73\pm2.77$ & $113\pm89.8$ \\
+$1\times 128$ & RMSProp & 4097 & 3 & $1.03\times10^{-4}$ & $1.63\times10^{-4}$ & $0.699\pm0.134$ & $31.2\pm8.00$ \\
+$3\times 128$ & RMSProp & 37121 & 3 & $7.16\times10^{-5}$ & $1.14\times10^{-4}$ & $0.765\pm0.148$ & $33.5\pm3.83$ \\
+$6\times 128$ & RMSProp & 86657 & 3 & $5.27\times10^{-5}$ & $7.21\times10^{-5}$ & $0.618\pm0.106$ & $29.4\pm3.49$ \\
+Net3 & ADAM & 133745 & 3 & $9.10\times10^{-6}$ & $1.22\times10^{-5}$ & $0.400\pm0.0987$ & $12.8\pm2.35$ \\
+Net3 & RMSProp & 133745 & 3 & $2.68\times10^{-4}$ & $1.26\times10^{-4}$ & $0.998\pm0.473$ & $40.3\pm9.28$ \\
+\bottomrule
+\end{tabular}
+\caption{\textsf{Positive CHL powers, $N=3$. Validation-selected checkpoint. Uniform architectures are labelled by hidden-layer count $D$ and width $h$; Net1 and Net3 retain their original tapered shapes. $P$ is the number of trainable parameters and $n$ the number of completed training seeds. Training and validation loss are in the fitted target space. Test MAPE is on signed weights and is reported as a percentage; test RMSE is in weight units. Test entries are mean $\pm$ sample standard deviation. A single completed seed has no estimated standard deviation. Training budget: $10000$ rounds.}}
+\label{tab:depth-chl-N3-positive-integer-best}
+\end{table}
+
+\begin{table}[!htbp]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.18}
+\begin{tabular}{@{}llrrrrrr@{}}
+\toprule
+$D\times h$ / model & Optimizer & $P$ & $n$ & Train loss & Val.\ loss & MAPE (\%) & RMSE \\
+\midrule
+$1\times 1$ & ADAM & 33 & 3 & $0.359$ & $0.453$ & $55.5\pm62.6$ & $27.5\pm28.1$ \\
+$1\times 4$ & ADAM & 129 & 3 & $0.00334$ & $0.00354$ & $6.12\pm0.643$ & $3.51\pm0.606$ \\
+$1\times 8$ & ADAM & 257 & 3 & $8.25\times10^{-4}$ & $9.55\times10^{-4}$ & $3.01\pm1.97$ & $1.66\pm0.990$ \\
+$1\times 16$ & ADAM & 513 & 3 & $1.52\times10^{-4}$ & $1.87\times10^{-4}$ & $1.29\pm0.292$ & $0.725\pm0.236$ \\
+$1\times 24$ & ADAM & 769 & 3 & $5.23\times10^{-5}$ & $5.77\times10^{-5}$ & $0.817\pm0.295$ & $0.444\pm0.177$ \\
+$3\times 16$ & ADAM & 1057 & 3 & $1.72\times10^{-5}$ & $1.66\times10^{-5}$ & $0.316\pm0.0164$ & $0.260\pm0.0485$ \\
+$6\times 16$ & ADAM & 1873 & 3 & $5.35\times10^{-6}$ & $7.34\times10^{-6}$ & $0.162\pm0.0189$ & $0.142\pm0.0216$ \\
+$1\times 128$ & ADAM & 4097 & 3 & $8.80\times10^{-7}$ & $1.79\times10^{-6}$ & $0.153\pm0.0235$ & $0.0698\pm0.0103$ \\
+$1\times 128$ & RMSProp & 4097 & 3 & $5.55\times10^{-6}$ & $5.10\times10^{-6}$ & $0.185\pm0.0306$ & $0.160\pm0.0445$ \\
+$3\times 128$ & ADAM & 37121 & 3 & $3.91\times10^{-7}$ & $5.25\times10^{-7}$ & $0.0510\pm0.0160$ & $0.0392\pm0.00611$ \\
+Net1 & ADAM & 51473 & 3 & $0.332$ & $0.423$ & $42.6\pm73.7$ & $20.1\pm34.5$ \\
+Net1 & RMSProp & 51473 & 3 & $3.67\times10^{-6}$ & $9.10\times10^{-6}$ & $0.147\pm0.0418$ & $0.123\pm0.0320$ \\
+$6\times 128$ & ADAM & 86657 & 3 & $2.68\times10^{-7}$ & $4.48\times10^{-7}$ & $0.0509\pm0.00801$ & $0.0345\pm0.00147$ \\
+\bottomrule
+\end{tabular}
+\caption{\textsf{Negative eta powers. Validation-selected checkpoint. Uniform architectures are labelled by hidden-layer count $D$ and width $h$; Net1 and Net3 retain their original tapered shapes. $P$ is the number of trainable parameters and $n$ the number of completed training seeds. Training and validation loss are in the fitted target space. Test MAPE is on signed weights and is reported as a percentage; test RMSE is in weight units. Test entries are mean $\pm$ sample standard deviation. A single completed seed has no estimated standard deviation. Training budget: $10000$ rounds.}}
+\label{tab:depth-eta-negative-best}
+\end{table}
+
+\clearpage
+\subsection{Final checkpoints}
+\begin{table}[!htbp]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.18}
+\begin{tabular}{@{}llrrrrrr@{}}
+\toprule
+$D\times h$ / model & Optimizer & $P$ & $n$ & Train loss & Val.\ loss & MAPE (\%) & RMSE \\
+\midrule
+$1\times 1$ & RMSProp & 33 & 3 & $0.620$ & $0.828$ & $99.0\pm72.4$ & $1432\pm889$ \\
+$1\times 4$ & RMSProp & 129 & 3 & $0.321$ & $0.427$ & $54.5\pm75.3$ & $898\pm907$ \\
+$1\times 8$ & RMSProp & 257 & 3 & $0.00634$ & $0.00556$ & $6.08\pm2.79$ & $168\pm70.1$ \\
+$1\times 16$ & RMSProp & 513 & 3 & $0.00472$ & $0.00465$ & $5.20\pm2.90$ & $179\pm99.4$ \\
+$1\times 24$ & RMSProp & 769 & 3 & $0.00167$ & $0.00178$ & $3.50\pm1.23$ & $127\pm50.0$ \\
+$3\times 16$ & RMSProp & 1057 & 3 & $0.00111$ & $0.00136$ & $2.73\pm1.73$ & $129\pm72.9$ \\
+$6\times 16$ & RMSProp & 1873 & 3 & $0.00125$ & $0.00171$ & $3.27\pm1.23$ & $130\pm58.7$ \\
+$1\times 128$ & ADAM & 4097 & 3 & $0.00298$ & $0.00306$ & $3.72\pm2.82$ & $111\pm76.3$ \\
+$1\times 128$ & RMSProp & 4097 & 3 & $0.00109$ & $0.00120$ & $2.92\pm1.07$ & $125\pm50.2$ \\
+$3\times 128$ & RMSProp & 37121 & 3 & $6.67\times10^{-4}$ & $0.00106$ & $2.24\pm1.46$ & $97.3\pm60.1$ \\
+$6\times 128$ & RMSProp & 86657 & 3 & $0.00108$ & $0.00157$ & $2.49\pm1.80$ & $112\pm75.6$ \\
+Net3 & ADAM & 133745 & 3 & $0.00120$ & $0.00162$ & $3.06\pm1.95$ & $129\pm92.7$ \\
+Net3 & RMSProp & 133745 & 3 & $0.00325$ & $0.00389$ & $4.93\pm2.72$ & $203\pm116$ \\
+\bottomrule
+\end{tabular}
+\caption{\textsf{Positive CHL powers, $N=3$. Final checkpoint. Uniform architectures are labelled by hidden-layer count $D$ and width $h$; Net1 and Net3 retain their original tapered shapes. $P$ is the number of trainable parameters and $n$ the number of completed training seeds. Training and validation loss are in the fitted target space. Test MAPE is on signed weights and is reported as a percentage; test RMSE is in weight units. Test entries are mean $\pm$ sample standard deviation. A single completed seed has no estimated standard deviation. Training budget: $10000$ rounds.}}
+\label{tab:depth-chl-N3-positive-integer-final}
+\end{table}
+
+\begin{table}[!htbp]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.18}
+\begin{tabular}{@{}llrrrrrr@{}}
+\toprule
+$D\times h$ / model & Optimizer & $P$ & $n$ & Train loss & Val.\ loss & MAPE (\%) & RMSE \\
+\midrule
+$1\times 1$ & ADAM & 33 & 3 & $0.359$ & $0.453$ & $55.5\pm62.6$ & $27.5\pm28.1$ \\
+$1\times 4$ & ADAM & 129 & 3 & $0.00333$ & $0.00357$ & $6.17\pm0.709$ & $3.49\pm0.604$ \\
+$1\times 8$ & ADAM & 257 & 3 & $8.12\times10^{-4}$ & $9.73\times10^{-4}$ & $3.06\pm2.01$ & $1.67\pm0.960$ \\
+$1\times 16$ & ADAM & 513 & 3 & $1.36\times10^{-4}$ & $2.03\times10^{-4}$ & $1.32\pm0.375$ & $0.713\pm0.251$ \\
+$1\times 24$ & ADAM & 769 & 3 & $5.89\times10^{-5}$ & $7.08\times10^{-5}$ & $0.839\pm0.296$ & $0.446\pm0.209$ \\
+$3\times 16$ & ADAM & 1057 & 3 & $2.67\times10^{-5}$ & $3.40\times10^{-5}$ & $0.351\pm0.0703$ & $0.330\pm0.0691$ \\
+$6\times 16$ & ADAM & 1873 & 3 & $3.03\times10^{-4}$ & $3.50\times10^{-4}$ & $0.739\pm0.512$ & $0.748\pm0.853$ \\
+$1\times 128$ & ADAM & 4097 & 3 & $2.46\times10^{-6}$ & $4.38\times10^{-6}$ & $0.165\pm0.0236$ & $0.0968\pm0.0201$ \\
+$1\times 128$ & RMSProp & 4097 & 3 & $6.57\times10^{-5}$ & $7.28\times10^{-5}$ & $0.610\pm0.622$ & $0.409\pm0.319$ \\
+$3\times 128$ & ADAM & 37121 & 3 & $2.16\times10^{-5}$ & $2.54\times10^{-5}$ & $0.302\pm0.390$ & $0.182\pm0.208$ \\
+Net1 & ADAM & 51473 & 3 & $0.332$ & $0.423$ & $42.8\pm73.6$ & $20.1\pm34.5$ \\
+Net1 & RMSProp & 51473 & 3 & $2.81\times10^{-4}$ & $3.22\times10^{-4}$ & $0.989\pm0.543$ & $0.890\pm0.553$ \\
+$6\times 128$ & ADAM & 86657 & 3 & $1.23\times10^{-6}$ & $2.44\times10^{-6}$ & $0.0741\pm0.0257$ & $0.0655\pm0.0152$ \\
+\bottomrule
+\end{tabular}
+\caption{\textsf{Negative eta powers. Final checkpoint. Uniform architectures are labelled by hidden-layer count $D$ and width $h$; Net1 and Net3 retain their original tapered shapes. $P$ is the number of trainable parameters and $n$ the number of completed training seeds. Training and validation loss are in the fitted target space. Test MAPE is on signed weights and is reported as a percentage; test RMSE is in weight units. Test entries are mean $\pm$ sample standard deviation. A single completed seed has no estimated standard deviation. Training budget: $10000$ rounds.}}
+\label{tab:depth-eta-negative-final}
+\end{table}
+
+\paragraph{Scope.}
+These experiments measure prediction within restricted power families. They do not establish extrapolation to new modular-form families or the necessity of neural networks. For full eta coefficient vectors, the weight is recovered exactly from $-a_1/(2a_0)$. For CHL eta products at $N>1$, the corresponding predictor is $-a_1/a_0$; at $N=1$ it is $-a_1/(2a_0)$. These identities are elementary baselines, not learned results, and apply when the required coefficients are retained.

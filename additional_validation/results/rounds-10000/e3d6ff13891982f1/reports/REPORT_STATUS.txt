@@ -1,0 +1,6 @@
+Generated from: /Users/pratikroy/Library/CloudStorage/Dropbox/KnotML/ModularForms/additional_validation/results/rounds-10000/e3d6ff13891982f1
+Distinct depth/width fits: 78
+Checkpoint selected for CHL paper tables: Best
+All test MAPE and RMSE columns are weight metrics; no log-target errors are substituted.
+Table snippets have no preamble. Load amsmath and booktabs in the manuscript.
+Compile report.tex from this directory with: pdflatex -halt-on-error report.tex (twice).
