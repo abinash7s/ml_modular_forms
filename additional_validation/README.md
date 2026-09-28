@@ -4,11 +4,6 @@ Wolfram Language scripts for the architecture study and the manuscript's CHL
 Tables 2-7. This is a standalone replacement bundle: extract it into a new
 folder. It needs neither the older bundle nor its `.mx` files.
 
-This corrected release fixes the September 26 smoke-run postprocessing errors
-and explicitly checks the numeric range of decoded weights and output metrics.
-If you already have the 174-fit bundle, update its code using the instructions
-in `UPDATE.md`; your `results/` directory can remain in place.
-
 ## Run
 
 Requirements: a working `wolframscript` installation (developed against Wolfram
@@ -24,9 +19,7 @@ bash run.sh              # all 174 fits, 10,000 epochs per fit
 The default is **78 width/depth fits plus 96 manuscript-table fits** (32 rows,
 including two eta comparison rows, each repeated for three seeds). All CHL
 test MAPE and RMSE values are on recovered weights. CHL training uses log-power
-targets and log-magnitude coefficient inputs. The CHL part of the width/depth
-study now uses this same protocol, so it is a new comparison; it does not reuse
-the older raw-input, 1,000-round results.
+targets and log-magnitude coefficient inputs
 
 Other useful commands:
 
@@ -73,21 +66,6 @@ curve paths are relative to the printed result directory.
 include weight MAPE (%) and weight RMSE together; training and validation losses
 are MSE in the declared training-target space. Every summary states its number
 of completed seeds and identifies incomplete results.
-
-The table generator writes ordinary `booktabs` tables using
-`\caption{\textsf{...}}`, so the snippets do not require `\ra` or `\capt`.
-See `docs/PROTOCOL.md` for corrections to the older notebook's captions.
-
-## Verification status
-
-The launchers, experiment grid, exact identities, report generation and TeX
-compilation were checked in the delivery environment. The supplied Mac log confirms that the original 27 MUnit tests passed and all
-six smoke networks trained before postprocessing failed. This release adds
-regression tests for preprocessing replay, result saving, cache reuse and error
-propagation. A Wolfram kernel was not available in the repair environment, so
-the updated MUnit tests and smoke run must still be executed locally. The historical
-report contains your actual uploaded results; new 10,000-epoch results are not
-included.
 
 
 ## Data and saved results
