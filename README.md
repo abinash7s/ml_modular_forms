@@ -13,7 +13,11 @@ implementation and data.
   [`additional_validation/README.md`](additional_validation/README.md).
   Its supplied CSVs and plots can be read without running Mathematica.
 - **Run the additional experiments:** use the commands in that directory's README.
-  It contains the documented 54-fit study of model size and optimizer choice.
+  The additional validation study compares network width, depth and optimizer
+using 26 configurations across two representative datasets. Each configuration
+is trained with three random seeds, giving 78 training runs in total.
+The folder also contains 96 separate training runs reproducing the
+manuscript's CHL configurations.
 
 ## Repository contents
 
@@ -59,17 +63,18 @@ quasimodular weight `w + 2`.
 
 ## Using the original notebook
 
-The notebook is an exploratory record, with repeated definitions and some stale
-references, rather than a single-command reproduction script. Work on a copy:
+The notebook is an exploratory record rather than a single-command reproduction script. 
+Avoid evaluating the entire notebook at once.
+Work on a copy:
 
 1. Start a fresh kernel and evaluate the required **Common functions** definitions.
 2. Choose one experiment section and load its cache or run its generator.
-3. Check paths against `mxtxt/` and `data2/`; several older cells assume files are
+3. Check paths against `mxtxt/` and `data2/`; some cells assume files are
    beside the notebook. For random CHL powers, evaluate **Stored random powers**
    before the corresponding generators.
 4. Evaluate that experiment's preprocessing, model and evaluation cells together.
 
-Avoid evaluating the entire notebook at once. Historical splits and initial
+Historical splits and initial 
 weights were not fully recorded, so a rerun need not recover the published
 numbers. Use `additional_validation` for the study with explicit settings and
 saved splits; it does not rerun all twelve original tables.
